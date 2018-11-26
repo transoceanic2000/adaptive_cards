@@ -1,0 +1,15 @@
+# Adaptive Cards Change Log
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## Unreleased
+
+### Added
+
+- Support for selectAction the card AdaptiveCards.
+
+## 0.1.0 (2018-11-25)
+
+- Initial release with basic support for Adaptive Cards and selected elements.

@@ -5,7 +5,7 @@ module AdaptiveCards
   # for sending to an Adaptive Card renderer (e.g. Teams)
   class AdaptiveCard < Base
     ALLOWED_OPTIONS = { 
-                        # select_action: AdaptiveCards::Action
+                        select_action: AdaptiveCards::Action, # Need to disallow Action.ShowCard once supported
                         fallback_text: String,
                         background_image: String,
                         speak: String,

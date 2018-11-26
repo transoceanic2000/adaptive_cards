@@ -24,6 +24,26 @@ describe AdaptiveCards::AdaptiveCard do
     end
   end
   
+  context "accepts appropriate options" do
+    subject(:empty_card) { AdaptiveCards::AdaptiveCard.new }
+    
+    it 'accepts a select action' do
+      empty_card.select_action = AdaptiveCards::Action::OpenUrl.new('https://example.com')
+      expect(empty_card.select_action).to be_an_instance_of(AdaptiveCards::Action::OpenUrl)
+
+      action_hash = empty_card.to_h['selectAction']
+      expect(action_hash[:type]).to eq 'Action.OpenUrl'
+      expect(action_hash[:url]).to eq 'https://example.com'
+    end
+    
+    it 'accepts fallback text' do
+      unsupported_card_hash = AdaptiveCards::AdaptiveCard.new(fallback_text: 'This is some fallback text').to_h
+      
+      expect(unsupported_card_hash[:type]).to eq 'AdaptiveCard'
+      expect(unsupported_card_hash['fallbackText']).to eq 'This is some fallback text'
+    end
+  end
+  
   context "adding items" do
     subject(:card) { AdaptiveCards::AdaptiveCard.new }
     

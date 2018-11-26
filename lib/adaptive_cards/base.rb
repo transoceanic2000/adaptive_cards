@@ -42,7 +42,15 @@ module AdaptiveCards
       optional_elements = {}
       supported_options.each_key do |option_key|
         key = convert_key_to_camel(option_key.to_s)
-        optional_elements[key] = send(option_key) unless send(option_key).nil?
+        unless send(option_key).nil?
+          # If the option is another Adaptive Card element we need to convert
+          # it too a hash, otherwise we can just set the value directly.
+          if send(option_key).class.name.split('::')[0] == 'AdaptiveCards'
+            optional_elements[key] = send(option_key).to_h
+          else
+            optional_elements[key] = send(option_key)
+          end
+        end
       end
 
       { type: type }.merge(optional_elements)
