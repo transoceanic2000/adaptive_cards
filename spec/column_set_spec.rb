@@ -17,6 +17,35 @@ describe AdaptiveCards::ColumnSet do
     end
   end
   
+  context 'accepts appropriate options' do
+    subject(:empty_set) { AdaptiveCards::ColumnSet.new }
+    
+    it 'accepts a select action' do
+      empty_set.select_action = AdaptiveCards::Action::OpenUrl.new('https://example.com')
+      expect(empty_set.select_action).to be_an_instance_of(AdaptiveCards::Action::OpenUrl)
+
+      action_hash = empty_set.to_h['selectAction']
+      expect(action_hash[:type]).to eq 'Action.OpenUrl'
+      expect(action_hash[:url]).to eq 'https://example.com'
+    end
+    
+    it 'accepts id value' do
+      column_set_with_id = AdaptiveCards::ColumnSet.new(id: '0x1234ab').to_h
+      
+      expect(column_set_with_id[:type]).to eq 'ColumnSet'
+      expect(column_set_with_id['id']).to eq '0x1234ab'
+    end
+    
+    it "won't accept a non-string as an id value" do
+      expect { empty_set.id = true }.to raise_error(AdaptiveCards::NotSupportedError)
+    end
+    
+    it "won't accept show card action as the select action" do
+      ac = AdaptiveCards::AdaptiveCard.new
+      expect { empty_set.select_action = AdaptiveCards::Action::ShowCard.new( ac ) }.to raise_error(AdaptiveCards::NotSupportedError)
+    end
+  end
+  
   context 'adding items' do
     subject(:set) { AdaptiveCards::ColumnSet.new }
     

@@ -19,8 +19,8 @@ describe AdaptiveCards::AdaptiveCard do
       expect(empty_card_hash.key?('selectAction')).to be false
       expect(empty_card_hash.key?('fallbackText')).to be false
       expect(empty_card_hash.key?('backgroundImage')).to be false
-      expect(empty_card_hash.key?(:speak)).to be false
-      expect(empty_card_hash.key?(:lang)).to be false
+      expect(empty_card_hash.key?('speak')).to be false
+      expect(empty_card_hash.key?('lang')).to be false
     end
   end
   
@@ -37,10 +37,10 @@ describe AdaptiveCards::AdaptiveCard do
     end
     
     it 'accepts fallback text' do
-      unsupported_card_hash = AdaptiveCards::AdaptiveCard.new(fallback_text: 'This is some fallback text').to_h
+      card_hash = AdaptiveCards::AdaptiveCard.new(fallback_text: 'This is some fallback text').to_h
       
-      expect(unsupported_card_hash[:type]).to eq 'AdaptiveCard'
-      expect(unsupported_card_hash['fallbackText']).to eq 'This is some fallback text'
+      expect(card_hash[:type]).to eq 'AdaptiveCard'
+      expect(card_hash['fallbackText']).to eq 'This is some fallback text'
     end
   end
   
@@ -81,6 +81,27 @@ describe AdaptiveCards::AdaptiveCard do
     
     it "won't accept non-card elements other than string" do
       expect { card.add(42) }.to raise_error(AdaptiveCards::InvalidElementError)
+    end
+    
+    it "accepts a complex set of components with different options" do
+      card.add(AdaptiveCards::TextBlock.new('This is an introduction to this card', size: 'large', color: 'accent'))
+          .add(AdaptiveCards::ColumnSet.new().add(AdaptiveCards::Column.new(width: 'auto'))
+                                             .add(AdaptiveCards::Column.new(width: 'stretch')))
+          .add(AdaptiveCards::FactSet.new(separator: true).add('2^0', '1')
+                                                          .add('2^1', '2')
+                                                          .add('2^2', '4')
+                                                          .add('2^3', '8'))
+      
+      expect(card.body.length).to eq 3
+      expect(card.body[0]).to be_an_instance_of(AdaptiveCards::TextBlock)
+      expect(card.body[1]).to be_an_instance_of(AdaptiveCards::ColumnSet)
+      expect(card.body[2]).to be_an_instance_of(AdaptiveCards::FactSet)
+    end
+    
+    it "enforces options in a complex set of components with different options" do
+      expect { card.add(AdaptiveCards::TextBlock.new('This is an introduction to this card', size: 'large'))
+                   .add(AdaptiveCards::ColumnSet.new().add(AdaptiveCards::Column.new(width: 'auto'))
+                                                      .add(AdaptiveCards::Column.new(width: 'invalid-stretch'))) }.to raise_error(AdaptiveCards::NotSupportedError)
     end
   end
 end

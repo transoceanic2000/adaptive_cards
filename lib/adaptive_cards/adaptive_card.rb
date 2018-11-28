@@ -4,17 +4,14 @@ module AdaptiveCards
   # An [Adaptive Card](https://docs.microsoft.com/en-us/adaptive-cards/)
   # for sending to an Adaptive Card renderer (e.g. Teams)
   class AdaptiveCard < Base
-    ALLOWED_OPTIONS = { 
-                        select_action: AdaptiveCards::Action, # Need to disallow Action.ShowCard once supported
-                        fallback_text: String,
-                        background_image: String,
-                        speak: String,
-                        lang: String
-                      }.freeze
+    option :select_action, required_type: AdaptiveCards::Action::Base,
+                           excluded_types: [ AdaptiveCards::Action::ShowCard ]
+    option :fallback_text, required_type: String
+    option :background_image, required_type: String
+    option :speak, required_type: String
+    option :lang, required_type: String
 
     SCHEMA = 'http://adaptivecards.io/schemas/adaptive-card.json'
-
-    attr_accessor *ALLOWED_OPTIONS.keys
 
     # Retrieve the list of elements in the card's body
     attr_reader :body
@@ -28,10 +25,10 @@ module AdaptiveCards
     #   to the appropriate part of the card (body or actions)
     # @param options [Hash] options to set on this
     def initialize(*elements, **options)
+      super options
       @actions = []
       @body = []
       elements.each { |e| add e }
-      setup_options options
     end
 
     def schema
@@ -83,10 +80,6 @@ module AdaptiveCards
 
     def to_json(options = {})
       to_h.to_json(options)
-    end
-
-    def supported_options
-      ALLOWED_OPTIONS
     end
   end
 end

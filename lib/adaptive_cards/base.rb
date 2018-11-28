@@ -3,44 +3,64 @@
 module AdaptiveCards
   # Base class for all Adaptive Card elements
   class Base
+    class << self
+      attr_accessor :supported_options
+    end
+
     protected
+    
+    def initialize( options )
+      options.each_key do |opt_key|
+        self.send("#{opt_key}=", options[opt_key])
+      end
+    end
+    
+    def self.option(symbol, options = {})
+      self.supported_options ||= {}
+      self.supported_options[symbol] = {}
+      %i[required_type excluded_types valid_values].each do |option|
+        self.supported_options[symbol][option] = options[option]
+      end
+      
+      define_method(symbol) do
+        instance_variable_get("@#{symbol}")
+      end
+      
+      define_method("#{symbol}=") do |value|
+        if !self.class.supported_options[symbol][:excluded_types].nil? &&
+           self.class.supported_options[symbol][:excluded_types].include?( value.class )
+          raise NotSupportedError,
+                "Cannot use a #{value.class.name} for #{symbol} option on #{self.class.name}"
+        end
+        
+        if !self.class.supported_options[symbol][:required_type].nil? &&
+           self.class.supported_options[symbol][:required_type] != AdaptiveCards::Boolean &&
+           !value.is_a?(self.class.supported_options[symbol][:required_type])
+          raise AdaptiveCards::NotSupportedError,
+                "#{symbol} option on #{self.class.name} requires a #{self.class.supported_options[symbol][:required_type]}"
+        elsif !self.class.supported_options[symbol][:required_type].nil? &&
+              self.class.supported_options[symbol][:required_type] == AdaptiveCards::Boolean
+          raise AdaptiveCards::NotSupportedError, "#{option} requires a boolean, not #{value}" unless [true, false].include?(value)
+        end
+        
+        if !self.class.supported_options[symbol][:valid_values].nil? &&
+           !self.class.supported_options[symbol][:valid_values].include?( value.to_s )
+          raise AdaptiveCards::NotSupportedError,
+                "#{value} is not a valid value for #{symbol}"
+        end
+        
+        instance_variable_set("@#{symbol}", value)
+      end
+    end
 
     # @return [String] the class name to use as a type argument in the JSON
     def type
       self.class.name.split('::').last
     end
 
-    # Set the specified option for this element
-    # @param option [Symbol] the option to set
-    # @param value the value of the option
-    # @raise [NotSupportedError] if the option is not supported for this element
-    #   or the option value is not valid for the option
-    def set_option(option, value)
-      if supported_options[option].nil?
-        raise NotSupportedError,
-              "#{option} is not a supported option for #{self.class.name}"
-      end
-      
-      if supported_options[option].is_a?(AdaptiveCards::Boolean)
-        set_bool_option(option, value)
-      elsif supported_options[option] == Integer
-        set_int_option(option, value)
-      elsif supported_options[option] == String
-        set_string_option(option, value)
-      else
-        set_enum_option(option, value)
-      end
-    end
-
-    def setup_options(options)
-      options.each_pair do |option, value|
-        set_option(option, value)
-      end
-    end
-
     def to_h
       optional_elements = {}
-      supported_options.each_key do |option_key|
+      self.class.supported_options.each_key do |option_key|
         key = convert_key_to_camel(option_key.to_s)
         unless send(option_key).nil?
           # If the option is another Adaptive Card element we need to convert
@@ -57,28 +77,6 @@ module AdaptiveCards
     end
 
     private
-
-    def set_bool_option(option, value)
-      raise NotSupportedError, "#{option} requires a boolean, not #{value}" unless [true, false].include?(value)
-
-      send "#{option}=", value
-    end
-
-    def set_int_option(option, value)
-      raise NotSupportedError, "#{option} requires an integer, not #{value}" unless value.is_a?(Integer)
-      
-      send "#{option}=", value
-    end
-
-    def set_string_option(option, value)
-      send "#{option}=", value.to_s
-    end
-
-    def set_enum_option(option, value)
-      raise NotSupportedError, "#{value} is not a valid value for #{option}" unless supported_options[option].include?(value.to_s)
-
-      send "#{option}=", value.to_s
-    end
 
     def convert_key_to_camel(key)
       key.gsub(/_([a-z])/) do

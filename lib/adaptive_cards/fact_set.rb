@@ -4,18 +4,14 @@ module AdaptiveCards
   # An AdaptiveCard [FactSet](https://adaptivecards.io/explorer/FactSet.html) for
   # sending to an AdaptiveCard renderer
   class FactSet < Base
-    ALLOWED_OPTIONS = { 
-                        spacing: %w[none small default medium large extraLarge],
-                        separator: AdaptiveCards::Boolean
-                      }.freeze
-
-    attr_accessor *ALLOWED_OPTIONS.keys
+    option :separator, required_type: AdaptiveCards::Boolean
+    option :spacing, valid_values: %w[none small default medium large extraLarge]
 
     attr_accessor :facts
 
     def initialize(options = {})
+      super options
       @facts = []
-      setup_options options
     end
 
     # Add a new fact to the fact set
@@ -25,10 +21,6 @@ module AdaptiveCards
     def add(title, value)
       @facts << { title: title, value: value }
       self
-    end
-
-    def supported_options
-      ALLOWED_OPTIONS
     end
 
     def to_h

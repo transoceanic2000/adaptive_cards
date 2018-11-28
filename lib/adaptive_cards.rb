@@ -13,6 +13,7 @@ module AdaptiveCards
   require 'adaptive_cards/base'
   require 'adaptive_cards/action/base'
   require 'adaptive_cards/action/open_url'
+  require 'adaptive_cards/action/show_card'
   require 'adaptive_cards/text_block'
   require 'adaptive_cards/container'
   require 'adaptive_cards/fact_set'

@@ -4,22 +4,19 @@ module AdaptiveCards
   # An AdaptiveCard [Container](https://adaptivecards.io/explorer/Container.html)
   # for sending to an AdaptiveCard renderer
   class Container < Base
-    ALLOWED_OPTIONS = {
-                        id: String,
-                        select_action: AdaptiveCards::Action::Base,
-                        separator: AdaptiveCards::Boolean,
-                        style: %w[default emphasis],
-                        spacing: %w[none small default medium large extraLarge],
-                        vertical_content_alignment: %w[top]
-                      }.freeze
+    option :id, required_type: String
+    option :select_action, required_type: AdaptiveCards::Action::Base,
+                           excluded_types: [ AdaptiveCards::Action::ShowCard ]
+    option :separator, required_type: AdaptiveCards::Boolean
+    option :spacing, valid_values: %w[none small default medium large extraLarge]
+    option :style, valid_values: %w[default emphasis]
+    option :vertical_content_alignment, valid_values: %w[top]
 
-    attr_accessor *ALLOWED_OPTIONS.keys
-    
     attr_accessor :items
 
     def initialize(options = {})
+      super options
       @items = []
-      setup_options options
     end
 
     # Add an item to this container
@@ -42,10 +39,6 @@ module AdaptiveCards
     
     def to_h
       super.merge(items: items.map(&:to_h))
-    end
-
-    def supported_options
-      ALLOWED_OPTIONS
     end
   end
 end
