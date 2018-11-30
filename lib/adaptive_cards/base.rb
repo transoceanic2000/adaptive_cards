@@ -36,13 +36,13 @@ module AdaptiveCards
       end
       
       define_method("#{symbol}=") do |value|
-        if !self.class.supported_options[symbol][:excluded_types].nil? &&
+        unless self.class.supported_options[symbol][:excluded_types].nil? &&
            self.class.supported_options[symbol][:excluded_types].include?( value.class )
           raise NotSupportedError,
                 "Cannot use a #{value.class.name} for #{symbol} option on #{self.class.name}"
         end
         
-        if !self.class.supported_options[symbol][:required_type].nil? &&
+        unless self.class.supported_options[symbol][:required_type].nil? &&
            self.class.supported_options[symbol][:required_type] != AdaptiveCards::Boolean &&
            !value.is_a?(self.class.supported_options[symbol][:required_type])
           raise AdaptiveCards::NotSupportedError,
@@ -52,7 +52,7 @@ module AdaptiveCards
           raise AdaptiveCards::NotSupportedError, "#{option} requires a boolean, not #{value}" unless [true, false].include?(value)
         end
         
-        if !self.class.supported_options[symbol][:valid_values].nil?
+        unless self.class.supported_options[symbol][:valid_values].nil?
           value = AdaptiveCards.convert_ruby_key_to_camel(value) if value.is_a?(Symbol)
           if !self.class.supported_options[symbol][:valid_values].include?( value.to_s )
             raise AdaptiveCards::NotSupportedError,

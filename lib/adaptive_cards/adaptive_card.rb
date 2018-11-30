@@ -63,11 +63,6 @@ module AdaptiveCards
       self
     end
 
-    # Utility method allowing a text block to be added via a single method call
-    def add_text_block(text, text_block_options = {})
-      self
-    end
-
     def to_h
       hash = {
                '$schema' => schema,
