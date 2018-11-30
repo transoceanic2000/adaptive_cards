@@ -1,5 +1,7 @@
 # AdaptiveCards
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d518675090374acdb96e5ba67df3c60a)](https://app.codacy.com/app/bruce.davidson/adaptive_cards?utm_source=github.com&utm_medium=referral&utm_content=transoceanic2000/adaptive_cards&utm_campaign=Badge_Grade_Settings)
+
 An experimental ruby library to author [Adaptive Cards](https://docs.microsoft.com/en-us/adaptive-cards/)
 for use with Microsoft and other tools.
 
