@@ -34,24 +34,25 @@ Create an adaptive card and add the elements you need to it, e.g.
 
 ```ruby
 ac = AdaptivdCards::AdaptiveCard.new( lang: 'fr' )
-                                .add( AdaptiveCards::TextBlock.new( 'Bonjour à tous', color: 'accent' )
+                                .add( AdaptiveCards::TextBlock.new( 'Bonjour à tous', color: :accent )
                                 .add( 'Plus d'informations ici' ) # Will be interpreted as text block
 render json: ac.to_json
 ```
 
 For simplicity all card elements accept their children via a simple `add`
 method, avoiding the need to remember which elements they need.
-`InvalidElementError` will be raised if you attempt to add a child that is not
+`InvalidContentError` will be raised if you attempt to add a child that is not
 valid for a particular element.
 
 The library is focussed on allowing you to create valid cards based on the
 Adaptive Card schema. It does not know or care about the ability of a
 particular client (e.g. Teams) to successfully render all elements in a card.
 
-All elements support all options defined in the Adaptive Card schema. Use
-standard Ruby naming conventions for options, e.g.
+All elements support all options defined in the Adaptive Card v1.0 schema. Use
+standard Ruby naming conventions and symbols for options, e.g.
 ```ruby
 ac.select_action = AdaptiveCards::Action::OpenUrl.new( 'https://example.com/' )
+cs.spacing = :extra_large
 ```
 These will be automatically converted to the correct camelCased form when you
 serialize the card to a hash or JSON.

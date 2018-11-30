@@ -10,11 +10,11 @@ describe AdaptiveCards::TextBlock do
     end
     
     it 'declares no options by default' do
-      expect(basic_text_block.key?(:color)).to be false
+      expect(basic_text_block.key?('color')).to be false
       expect(basic_text_block.key?('isSubtle')).to be false
       expect(basic_text_block.key?('maxLines')).to be false
-      expect(basic_text_block.key?(:weight)).to be false
-      expect(basic_text_block.key?(:separator)).to be false
+      expect(basic_text_block.key?('weight')).to be false
+      expect(basic_text_block.key?('separator')).to be false
     end
   end
 end

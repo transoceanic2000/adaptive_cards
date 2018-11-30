@@ -44,6 +44,13 @@ describe AdaptiveCards::ColumnSet do
       ac = AdaptiveCards::AdaptiveCard.new
       expect { empty_set.select_action = AdaptiveCards::Action::ShowCard.new( ac ) }.to raise_error(AdaptiveCards::NotSupportedError)
     end
+    
+    it 'converts ruby symbol option values to camel-case options' do
+      empty_set.spacing = :extra_large
+      
+      hash = empty_set.to_h
+      expect(hash['spacing']).to eq 'extraLarge'
+    end
   end
   
   context 'adding items' do
@@ -57,17 +64,17 @@ describe AdaptiveCards::ColumnSet do
     end
     
     it 'does not accept other card items' do
-      expect { set.add(AdaptiveCards::Container.new) }.to raise_error(AdaptiveCards::InvalidElementError)
+      expect { set.add(AdaptiveCards::Container.new) }.to raise_error(AdaptiveCards::InvalidContentError)
       
-      expect { set.add(AdaptiveCards::TextBlock.new('Hello world')) }.to raise_error(AdaptiveCards::InvalidElementError)
+      expect { set.add(AdaptiveCards::TextBlock.new('Hello world')) }.to raise_error(AdaptiveCards::InvalidContentError)
     end
     
     it 'does not accept card actions' do
-      expect { set.add(AdaptiveCards::Action::OpenUrl.new('https://example.com/')) }.to raise_error(AdaptiveCards::InvalidElementError)
+      expect { set.add(AdaptiveCards::Action::OpenUrl.new('https://example.com/')) }.to raise_error(AdaptiveCards::InvalidContentError)
     end
     
     it 'does not accept arbitrary items' do
-      expect { set.add(42) }.to raise_error(AdaptiveCards::InvalidElementError)
+      expect { set.add(42) }.to raise_error(AdaptiveCards::InvalidContentError)
     end
   end
 end

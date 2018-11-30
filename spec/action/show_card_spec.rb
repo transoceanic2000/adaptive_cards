@@ -34,4 +34,14 @@ describe AdaptiveCards::Action::ShowCard do
       expect(hash['title']).to eq('Another empty card')
     end
   end
+  
+  context 'only knows how to show a card' do
+    it 'cannot display a card element' do
+      expect { AdaptiveCards::Action::ShowCard.new(AdaptiveCards::Container.new) }.to raise_error(AdaptiveCards::InvalidContentError)
+    end
+    
+    it 'cannot show another action' do
+      expect { AdaptiveCards::Action::ShowCard.new(AdaptiveCards::Action::OpenUrl.new('https://example.com')) }.to raise_error(AdaptiveCards::InvalidContentError)
+    end
+  end
 end

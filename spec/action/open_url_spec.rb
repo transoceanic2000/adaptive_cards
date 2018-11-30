@@ -10,10 +10,7 @@ describe AdaptiveCards::Action::OpenUrl do
     end
 
     it 'declares no options by default' do
-      expect(open_url_action.key?(:color)).to be false
-      expect(open_url_action.key?('isSubtle')).to be false
-      expect(open_url_action.key?('maxLines')).to be false
-      expect(open_url_action.key?(:title)).to be false
+      expect(open_url_action.key?('title')).to be false
     end
   end
 

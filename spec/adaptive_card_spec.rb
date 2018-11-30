@@ -80,13 +80,13 @@ describe AdaptiveCards::AdaptiveCard do
     end
     
     it "won't accept non-card elements other than string" do
-      expect { card.add(42) }.to raise_error(AdaptiveCards::InvalidElementError)
+      expect { card.add(42) }.to raise_error(AdaptiveCards::InvalidContentError)
     end
     
     it "accepts a complex set of components with different options" do
-      card.add(AdaptiveCards::TextBlock.new('This is an introduction to this card', size: 'large', color: 'accent'))
+      card.add(AdaptiveCards::TextBlock.new('This is an introduction to this card', size: 'large', color: :accent))
           .add(AdaptiveCards::ColumnSet.new().add(AdaptiveCards::Column.new(width: 'auto'))
-                                             .add(AdaptiveCards::Column.new(width: 'stretch')))
+                                             .add(AdaptiveCards::Column.new(width: :stretch)))
           .add(AdaptiveCards::FactSet.new(separator: true).add('2^0', '1')
                                                           .add('2^1', '2')
                                                           .add('2^2', '4')

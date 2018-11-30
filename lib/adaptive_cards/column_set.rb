@@ -20,13 +20,13 @@ module AdaptiveCards
     # Add a {Column} to this column set
     #
     # @param column [Column] the column to add to this set
-    # @raise [InvalidElementError] if an invalid element is added
+    # @raise [InvalidContentError] if an invalid element is added
     # @return [ColumnSet] self, to allow method chaining
     def add(column)
       if column.is_a?(AdaptiveCards::Column)
         @columns << column
       else
-        raise InvalidElementError,
+        raise InvalidContentError,
               "#{column.class} is not a column"
       end
       self

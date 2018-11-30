@@ -9,7 +9,7 @@ module AdaptiveCards
       
       def initialize(card, options = {})
         super options
-        raise InvalidElementError,
+        raise InvalidContentError,
               "ShowCard action requires an Adaptive Card to show" unless card.is_a?(AdaptiveCards::AdaptiveCard)
 
         @card = card

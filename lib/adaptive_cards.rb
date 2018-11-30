@@ -6,7 +6,7 @@ require 'json'
 # AdaptiveCard client (e.g. Microsoft Teams)
 module AdaptiveCards
   class NotSupportedError < StandardError; end
-  class InvalidElementError < StandardError; end
+  class InvalidContentError < StandardError; end
   class Boolean; end
 
   require 'adaptive_cards/version'
@@ -15,6 +15,7 @@ module AdaptiveCards
   require 'adaptive_cards/action/open_url'
   require 'adaptive_cards/action/show_card'
   require 'adaptive_cards/text_block'
+  require 'adaptive_cards/image'
   require 'adaptive_cards/container'
   require 'adaptive_cards/fact_set'
   require 'adaptive_cards/column'

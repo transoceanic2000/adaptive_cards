@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 module AdaptiveCards
+  # Convert ruby-style underscore-separated lower case symbol identifiers to
+  # Adaptive Card-style camelCased strings
+  def self.convert_ruby_key_to_camel(key)
+    key.to_s.gsub(/_([a-z])/) do
+      m = Regexp.last_match
+      m[1].upcase
+    end
+  end
+  
   # Base class for all Adaptive Card elements
   class Base
     class << self
@@ -43,10 +52,12 @@ module AdaptiveCards
           raise AdaptiveCards::NotSupportedError, "#{option} requires a boolean, not #{value}" unless [true, false].include?(value)
         end
         
-        if !self.class.supported_options[symbol][:valid_values].nil? &&
-           !self.class.supported_options[symbol][:valid_values].include?( value.to_s )
-          raise AdaptiveCards::NotSupportedError,
-                "#{value} is not a valid value for #{symbol}"
+        if !self.class.supported_options[symbol][:valid_values].nil?
+          value = AdaptiveCards.convert_ruby_key_to_camel(value) if value.is_a?(Symbol)
+          if !self.class.supported_options[symbol][:valid_values].include?( value.to_s )
+            raise AdaptiveCards::NotSupportedError,
+                  "#{value} is not a valid value for #{symbol}"
+          end
         end
         
         instance_variable_set("@#{symbol}", value)
@@ -61,28 +72,20 @@ module AdaptiveCards
     def to_h
       optional_elements = {}
       self.class.supported_options.each_key do |option_key|
-        key = convert_key_to_camel(option_key.to_s)
-        unless send(option_key).nil?
+        key = AdaptiveCards.convert_ruby_key_to_camel(option_key)
+        option_value = send(option_key)
+        unless option_value.nil?
           # If the option is another Adaptive Card element we need to convert
           # it too a hash, otherwise we can just set the value directly.
-          if send(option_key).class.name.split('::')[0] == 'AdaptiveCards'
-            optional_elements[key] = send(option_key).to_h
+          if option_value.class.name.split('::')[0] == 'AdaptiveCards'
+            optional_elements[key] = option_value.to_h
           else
-            optional_elements[key] = send(option_key)
+            optional_elements[key] = option_value
           end
         end
       end
 
       { type: type }.merge(optional_elements)
-    end
-
-    private
-
-    def convert_key_to_camel(key)
-      key.gsub(/_([a-z])/) do
-        m = Regexp.last_match
-        m[1].upcase
-      end
     end
   end
 end

@@ -30,11 +30,11 @@ describe AdaptiveCards::Container do
     end
     
     it 'does not accept card actions' do
-      expect { container.add(AdaptiveCards::Action::OpenUrl.new('https://example.com/')) }.to raise_error(AdaptiveCards::InvalidElementError)
+      expect { container.add(AdaptiveCards::Action::OpenUrl.new('https://example.com/')) }.to raise_error(AdaptiveCards::InvalidContentError)
     end
     
     it 'does not accept arbitrary items' do
-      expect { container.add(42) }.to raise_error(AdaptiveCards::InvalidElementError)
+      expect { container.add(42) }.to raise_error(AdaptiveCards::InvalidContentError)
     end
   end
 end

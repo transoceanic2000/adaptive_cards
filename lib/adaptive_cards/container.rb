@@ -23,7 +23,7 @@ module AdaptiveCards
     #
     # @param item [AdaptiveCards::Base] the card element to add to this
     #   container
-    # @raise [InvalidElementError] if an invalid element is added
+    # @raise [InvalidContentError] if an invalid element is added
     # @return [Container] self, to allow method chaining
     def add(item)
       if item.is_a?(AdaptiveCards::Base) &&
@@ -31,7 +31,7 @@ module AdaptiveCards
          !item.is_a?(AdaptiveCards::Action::Base)
         @items << item
       else
-        raise InvalidElementError,
+        raise InvalidContentError,
               "#{item.class} is not a valid item for a container"
       end
       self

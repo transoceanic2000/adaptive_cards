@@ -57,7 +57,7 @@ module AdaptiveCards
             !item.is_a?(AdaptiveCards::AdaptiveCard)
         @body << item
       else
-        raise InvalidElementError,
+        raise InvalidContentError,
               "#{item.class} is not a valid element of an Adaptive Card"
       end
       self
