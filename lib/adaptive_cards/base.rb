@@ -36,13 +36,13 @@ module AdaptiveCards
       end
       
       define_method("#{symbol}=") do |value|
-        unless self.class.supported_options[symbol][:excluded_types].nil? &&
+        if !self.class.supported_options[symbol][:excluded_types].nil? &&
            self.class.supported_options[symbol][:excluded_types].include?( value.class )
           raise NotSupportedError,
                 "Cannot use a #{value.class.name} for #{symbol} option on #{self.class.name}"
         end
         
-        unless self.class.supported_options[symbol][:required_type].nil? &&
+        if !self.class.supported_options[symbol][:required_type].nil? &&
            self.class.supported_options[symbol][:required_type] != AdaptiveCards::Boolean &&
            !value.is_a?(self.class.supported_options[symbol][:required_type])
           raise AdaptiveCards::NotSupportedError,

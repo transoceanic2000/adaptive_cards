@@ -17,8 +17,8 @@ module AdaptiveCards
     attr_accessor :url
 
     def initialize(url, options = {})
-      raise InvalidContentError, 'Must specify a valid URL for an image' unless url.is_a?(String) ||
-                                                                                url.is_a?(URI::Generic)
+      raise InvalidContentError, 'Must specify a valid URL for the image' unless url.is_a?(String) ||
+                                                                                 url.is_a?(URI::Generic)
       super options
       @url = url
     end
